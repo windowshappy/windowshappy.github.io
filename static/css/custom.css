@@ -19,15 +19,23 @@ hue-6-2: #e6c07b
 */
 
 :root {
-    --hl-color: #abb2bf;      /*代码框字体顔色 【必须】 (把下面.hljs的 color复製到这里来)*/
-    --hl-bg: #313131;         /*代码框背景色 【必须】 (把下面.hljs的 background复製到这里来)*/
-    --hltools-bg: #49b1f587;    /*代码框顶部工具栏背景色 【可选】(如果你关掉了 copy、lang 和 shrink,可不用配置这个）*/
-    --hltools-color: #ffffff;    /*代码框顶部工具栏字体顔色 【可选】(如果你关掉了 copy、lang 和 shrink,可不用配置这个）*/
-    --hlnumber-bg: rgb(235 239 241);   /*代码框行数背景色 【可选】(如果已经关掉 line_number,可以不用配置这个)*/
-    --hlnumber-color: #221a0f52;   /*代码框行数字体顔色 【可选】 (如果已经关掉 line_number,可以不用配置这个)*/
-    --hlscrollbar-bg: #d3af86;/*代码框滚动条顔色 【可选】（默认为主题主顔色）*/
-    --hlexpand-bg: #d3af86;   /*代码框底部展开背景色 【可选】(如果已经关掉 highlight_height_limit,可以不用配置这个)*/
-  }
+    --hl-color: #abb2bf;
+    /*代码框字体顔色 【必须】 (把下面.hljs的 color复製到这里来)*/
+    --hl-bg: #313131;
+    /*代码框背景色 【必须】 (把下面.hljs的 background复製到这里来)*/
+    --hltools-bg: #49b1f587;
+    /*代码框顶部工具栏背景色 【可选】(如果你关掉了 copy、lang 和 shrink,可不用配置这个）*/
+    --hltools-color: #ffffff;
+    /*代码框顶部工具栏字体顔色 【可选】(如果你关掉了 copy、lang 和 shrink,可不用配置这个）*/
+    --hlnumber-bg: rgb(235 239 241);
+    /*代码框行数背景色 【可选】(如果已经关掉 line_number,可以不用配置这个)*/
+    --hlnumber-color: #221a0f52;
+    /*代码框行数字体顔色 【可选】 (如果已经关掉 line_number,可以不用配置这个)*/
+    --hlscrollbar-bg: #d3af86;
+    /*代码框滚动条顔色 【可选】（默认为主题主顔色）*/
+    --hlexpand-bg: #d3af86;
+    /*代码框底部展开背景色 【可选】(如果已经关掉 highlight_height_limit,可以不用配置这个)*/
+}
 
 .hljs {
     color: #abb2bf;
@@ -102,4 +110,36 @@ hue-6-2: #e6c07b
 
 .hljs-link {
     text-decoration: underline;
+}
+
+
+/* CSS */
+@import url(https://cdn.jsdelivr.net/npm/firacode@6.2.0/distr/fira_code.css);
+
+h1#site-title {
+    /* font-size: 8vh !important; */
+    text-shadow: 3px 1px 4px #000 !important;
+    font-family: Fira Code !important
+}
+
+span#subtitle {
+    font-size: 3vh !important;
+    /* text-shadow: 3px 1px 2px #000 !important; */
+    font-family: Fira Code !important
+}
+
+a#site-name {
+    /* text-shadow: 3px 1px 2px #000 !important; */
+    font-family: Fira Code !important
+}
+
+#article-container pre,
+#article-container code {
+    font-family: 'JetBrainsMono';
+    src: url("https://gcore.jsdelivr.net/gh/JetBrains/JetBrainsMono@master/fonts/ttf/JetBrainsMono-Bold.ttf");
+}
+
+.article-title {
+    font-weight: bolder;
+    font-family: Fira Code !important;
 }
