@@ -24,7 +24,9 @@ jobs:
         uses: withastro/action@v3
         with:
           node-version: 22
-          package-manager: pnpm@9
+          # 不要显式指定 package-manager：withastro/action 在有该参数时
+          # 不会设置 LOCKFILE，导致 setup-node 的 cache-dependency-path 为空而失败。
+          # 留空让它自动检测 pnpm-lock.yaml，pnpm 版本从 package.json 的 packageManager 字段读取。
 
   deploy:
     needs: build
