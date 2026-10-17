@@ -58,6 +58,7 @@ lang: ''             # 单篇文章的语言覆盖，可选
 | 左下角头像、昵称、简介、社交链接 | `src/config.ts` → `profileConfig` |
 | 版权协议 | `src/config.ts` → `licenseConfig` |
 | 代码块配色 | `src/config.ts` → `expressiveCodeConfig` |
+| 评论系统 | `src/config.ts` → `commentConfig` |
 | 部署域名 | `astro.config.mjs` → `site` |
 | 关于页内容 | `src/content/spec/about.md` |
 
@@ -65,6 +66,37 @@ lang: ''             # 单篇文章的语言覆盖，可选
 
 - `src/assets/images/demo-avatar.png`（头像）
 - `src/assets/images/demo-banner.png`（顶部横幅）
+
+## 评论系统（giscus）
+
+文章底部用 [giscus](https://giscus.app/zh-CN) 做评论。评论数据以 **GitHub Discussions** 的形式存在你自己的仓库里，零后端、零费用、无广告；访客需要用 GitHub 账号登录后才能评论。
+
+不想用评论了：把 `src/config.ts` → `commentConfig.enable` 改成 `false` 即可（组件会完全不出现在页面上）。
+
+配置项都在 `src/config.ts` → `commentConfig.giscus`：
+
+| 字段 | 说明 |
+| --- | --- |
+| `repo` / `repoId` | 仓库与它的 `node_id`。`repoId` 取 `https://api.github.com/repos/<owner>/<repo>` 里的 `node_id` 字段 |
+| `category` / `categoryId` | Discussions 的分类名与该分类的 `node_id` |
+| `mapping` | 页面与 discussion 的关联方式，默认 `pathname`（按文章路径匹配） |
+| `strict` | 用 `pathname` 时保持 `false`，否则路径大小写变化会导致评论错位 |
+| `lang` | 评论区界面语言，`zh-CN` |
+| `loading` | `lazy` = 滚动到评论区才加载 |
+
+**以后想换分类**，两个 ID 可以用这个公开接口查（不需要 token）：
+
+```sh
+curl "https://giscus.app/api/discussions/categories?repo=windowshappy/windowshappy.github.io"
+```
+
+启用评论有两个前提，缺一不可：
+
+1. 仓库 **Settings → General → Features → Discussions** 已勾选
+2. 已安装 [giscus App](https://github.com/apps/giscus) 并授权本仓库（否则评论区会提示 giscus 未安装）
+
+> 分类用的是 **Announcements**（giscus 官方推荐）：该分类只有维护者能新建讨论，可以防刷。
+> 每篇文章的 discussion 在**第一次有人评论时**才自动创建。所以空评论区报 `Discussion not found` 是正常现象，登录 GitHub 后发第一条评论即可。
 
 ## 部署
 
@@ -81,6 +113,21 @@ git push
 `withastro/action` 的 `action.yml` 有逻辑缺陷：**一旦显式传入 `package-manager` 参数，它就不会设置 `LOCKFILE` 环境变量**，随后 `actions/setup-node` 的 `cache-dependency-path` 变成空值，构建在第 3 个 step 就报错（整个 job 十几秒就失败）。
 
 所以 `.github/workflows/deploy.yml` 里只写了 `node-version`，让 action 自己扫描到 `pnpm-lock.yaml`（这样 `PACKAGE_MANAGER` 和 `LOCKFILE` 都会被设上）。pnpm 的版本由 `package.json` 的 `packageManager` 字段（`pnpm@9.14.4`）决定。
+
+### 踩过的坑：src/styles 下的 CSS 没有显式 import
+
+Fuwari 有个历史遗留写法：`src/styles/` 里的 `main.css`、`markdown.css` 等文件**没有被任何地方 import**，它们是被 `src/components/misc/ImageWrapper.astro` 里这句顺带拉进构建图的：
+
+```js
+// 本意只是给图片做动态导入映射，但 ../../** 实际匹配了整个 src/**
+const files = import.meta.glob<ImageMetadata>("../../**", { import: "default" });
+```
+
+后果：这些 CSS 由 Vite **并发**转换，而 Tailwind 的 `@apply` 解析自定义类时，要求那个类的定义**已经先被处理过**。于是 `markdown.css` 里的 `@apply link`（`.link` 定义在 `main.css`）会**偶发**失败，报 ``The `link` class does not exist``，构建随机挂掉——加一行 CSS 或换个组件都可能触发。
+
+已处理：把 `markdown.css` 中两处跨文件 `@apply`（`link`、`btn-regular-dark`）**展开成原生 utility**，从此没有跨文件依赖，构建稳定。
+
+**如果以后从上游同步主题，注意别把这处改动覆盖回去。**
 
 ## 网络说明（重要）
 
