@@ -119,3 +119,14 @@ export type CommentConfig = {
 	enable: boolean;
 	giscus: GiscusConfig;
 };
+
+export type UmamiConfig = {
+	enable: boolean;
+	websiteId: string; // Umami 后台的「网站 ID」
+	baseUrl: string; // 官方 Cloud 用 https://cloud.umami.is，自建实例填自己的域名
+	domains?: string; // 只统计这些域名，逗号分隔（避免把 localhost 的预览数据算进去）
+};
+
+export type AnalyticsConfig = {
+	umami?: UmamiConfig;
+};

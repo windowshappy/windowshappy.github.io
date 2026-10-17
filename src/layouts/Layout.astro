@@ -4,7 +4,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
 import ConfigCarrier from "@components/ConfigCarrier.astro";
-import { profileConfig, siteConfig } from "@/config";
+import { analyticsConfig, profileConfig, siteConfig } from "@/config";
 import {
 	AUTO_MODE,
 	BANNER_HEIGHT,
@@ -70,6 +70,13 @@ const bannerOffsetByPosition = {
 };
 const bannerOffset =
 	bannerOffsetByPosition[siteConfig.banner.position || "center"];
+
+// 访问统计（Umami）：配置在 config.ts → analyticsConfig
+const umami = analyticsConfig?.umami;
+const umamiEnabled = Boolean(umami?.enable && umami.websiteId);
+const umamiScriptSrc = umami
+	? `${umami.baseUrl.replace(/\/+$/, "")}/script.js`
+	: "";
 ---
 
 <!DOCTYPE html>
@@ -146,6 +153,21 @@ const bannerOffset =
 		<slot name="head"></slot>
 
 		<link rel="alternate" type="application/rss+xml" title={profileConfig.name} href={`${Astro.site}rss.xml`}/>
+
+		{/* 访问统计（Umami）。必须带 data-swup-ignore-script：Swup 的 scripts 插件每次
+		    跳转都会重新执行 head 里的 script，重复执行会让 umami 叠加多层 pushState
+		    钩子，导致站内翻页被重复计数。 */}
+		{umamiEnabled && (
+			<script
+				is:inline
+				async
+				defer
+				src={umamiScriptSrc}
+				data-website-id={umami?.websiteId}
+				data-domains={umami?.domains}
+				data-swup-ignore-script
+			></script>
+		)}
 
 	</head>
 	<body class=" min-h-screen transition " class:list={[{"lg:is-home": isHomePage, "enable-banner": enableBanner}]}

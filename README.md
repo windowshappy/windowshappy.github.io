@@ -98,6 +98,33 @@ curl "https://giscus.app/api/discussions/categories?repo=windowshappy/windowshap
 > 分类用的是 **Announcements**（giscus 官方推荐）：该分类只有维护者能新建讨论，可以防刷。
 > 每篇文章的 discussion 在**第一次有人评论时**才自动创建。所以空评论区报 `Discussion not found` 是正常现象，登录 GitHub 后发第一条评论即可。
 
+## 访问统计（Umami）
+
+用 [Umami](https://umami.is) 统计访问量：**无 cookie、不采集个人信息**，脚本只有 5KB。配置在 `src/config.ts` → `analyticsConfig.umami`，目前是**关闭**状态，按下面三步开启：
+
+1. 注册 <https://cloud.umami.is>（邮箱即可，免费额度对个人博客足够）
+2. 登录后 **Settings → Websites → Add website**，域名填 `windowshappy.github.io`
+3. 复制生成的 **Website ID**，填进配置并把 `enable` 改成 `true`：
+
+```ts
+umami: {
+    enable: true,
+    websiteId: "粘贴这里的网站 ID",
+    baseUrl: "https://cloud.umami.is",
+    domains: "windowshappy.github.io",
+},
+```
+
+改完 `git push`，之后在 umami 后台就能看到访问量、来源、页面排行、设备等。
+
+几个要点：
+
+- **`domains` 只能写主机名**，不要带 `https://` 或端口。umami 是拿 `location.hostname` 去比对的，写错了会导致**完全不统计**（这个坑我踩过：本地测试填 `localhost:4321` 时，脚本正常加载但一个请求都不发）。
+- 设了 `domains` 之后，本地预览的访问不会被计入统计。
+- 自建实例：把 `baseUrl` 换成你自己的域名即可（脚本路径固定为 `/script.js`）。
+- **站内无刷新跳转也能统计到**：umami 脚本内部接管了 `history.pushState`，而 Fuwari 的 Swup 正是用 pushState 跳转的，所以不需要额外挂钩子。
+- head 里那个 `<script>` 的 `data-swup-ignore-script` 属性**不能删**：Swup 的 scripts 插件每次跳转都会重新执行 head 里的 script，重复执行会叠加多层 pushState 钩子，导致站内翻页**重复计数**。
+
 ## 部署
 
 推送到 `main` 即自动部署，约 1 分钟：

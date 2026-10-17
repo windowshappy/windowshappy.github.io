@@ -1,4 +1,5 @@
 import type {
+	AnalyticsConfig,
 	CommentConfig,
 	ExpressiveCodeConfig,
 	LicenseConfig,
@@ -94,5 +95,18 @@ export const commentConfig: CommentConfig = {
 		inputPosition: "top", // 评论框显示在评论列表上方
 		lang: "zh-CN",
 		loading: "lazy", // 滚动到评论区才加载
+	},
+};
+
+// 访问统计（Umami，无 cookie、注重隐私）
+// 官方 Cloud：https://cloud.umami.is 登录 → Settings → Websites → Add website
+//   添加后复制那串 «网站 ID» 填到下面，再把 enable 改成 true
+// 自建实例：把 baseUrl 换成自己的域名即可（脚本路径固定是 /script.js）
+export const analyticsConfig: AnalyticsConfig = {
+	umami: {
+		enable: false, // 填好 websiteId 后改成 true
+		websiteId: "", // 形如 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+		baseUrl: "https://cloud.umami.is",
+		domains: "windowshappy.github.io", // 只统计这个主机名（注意：不要带端口/协议，umami 是拿 location.hostname 比的）
 	},
 };
