@@ -76,6 +76,12 @@ git commit -m "新文章"
 git push
 ```
 
+### 踩过的坑：不要在 withastro/action 里写 package-manager
+
+`withastro/action` 的 `action.yml` 有逻辑缺陷：**一旦显式传入 `package-manager` 参数，它就不会设置 `LOCKFILE` 环境变量**，随后 `actions/setup-node` 的 `cache-dependency-path` 变成空值，构建在第 3 个 step 就报错（整个 job 十几秒就失败）。
+
+所以 `.github/workflows/deploy.yml` 里只写了 `node-version`，让 action 自己扫描到 `pnpm-lock.yaml`（这样 `PACKAGE_MANAGER` 和 `LOCKFILE` 都会被设上）。pnpm 的版本由 `package.json` 的 `packageManager` 字段（`pnpm@9.14.4`）决定。
+
 ## 网络说明（重要）
 
 这台机器上 `github.com:443` **不通**（连接被重置），但 `ssh.github.com:443` 和 `api.github.com` 可以访问，所以 git 远程走的是 SSH over 443。
