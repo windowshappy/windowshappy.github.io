@@ -565,3 +565,80 @@ if (window.swup) {
 	document.addEventListener("swup:enable", setup)
 }
 </script>
+
+<!-- giscus 评论：加载逻辑放在全局，因为 Swup 无刷新跳转时组件内的 script 不会重新执行 -->
+<script>
+import { commentConfig } from "../config";
+
+const GISCUS_CLIENT_SRC = "https://giscus.app/client.js";
+const GISCUS_ORIGIN = "https://giscus.app";
+
+function currentGiscusTheme(): string {
+	// 跟随站点的亮/暗模式（Fuwari 用 <html> 上的 dark class 切换）
+	return document.documentElement.classList.contains("dark") ? "dark" : "light";
+}
+
+function syncGiscusTheme() {
+	const frame = document.querySelector<HTMLIFrameElement>("iframe.giscus-frame");
+	if (!frame?.contentWindow) return;
+	frame.contentWindow.postMessage(
+		{ giscus: { setConfig: { theme: currentGiscusTheme() } } },
+		GISCUS_ORIGIN,
+	);
+}
+
+function loadGiscus() {
+	if (!commentConfig.enable) return;
+
+	const container = document.getElementById("giscus-container");
+	if (!container || container.dataset.giscusLoaded === "true") return;
+
+	const d = container.dataset;
+	if (!d.repoId || !d.categoryId) {
+		console.warn("[giscus] repoId/categoryId 还没配置，评论区已跳过加载");
+		return;
+	}
+	container.dataset.giscusLoaded = "true";
+
+	const script = document.createElement("script");
+	script.src = GISCUS_CLIENT_SRC;
+	script.async = true;
+	script.crossOrigin = "anonymous";
+
+	const attrs: [string, string | undefined][] = [
+		["data-repo", d.repo],
+		["data-repo-id", d.repoId],
+		["data-category", d.category],
+		["data-category-id", d.categoryId],
+		["data-mapping", d.mapping],
+		["data-strict", d.strict],
+		["data-reactions-enabled", d.reactionsEnabled],
+		["data-emit-metadata", d.emitMetadata],
+		["data-input-position", d.inputPosition],
+		["data-lang", d.lang],
+		["data-loading", d.loading],
+		["data-theme", currentGiscusTheme()],
+	];
+	for (const [key, value] of attrs) {
+		if (value !== undefined) script.setAttribute(key, value);
+	}
+
+	container.appendChild(script);
+}
+
+// 切换亮/暗模式时同步评论区主题
+new MutationObserver(syncGiscusTheme).observe(document.documentElement, {
+	attributeFilter: ["class"],
+});
+
+const setupGiscus = () => {
+	window.swup.hooks.on("page:view", loadGiscus);
+};
+
+loadGiscus();
+if (window.swup) {
+	setupGiscus();
+} else {
+	document.addEventListener("swup:enable", setupGiscus);
+}
+</script>

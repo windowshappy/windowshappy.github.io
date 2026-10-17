@@ -19,8 +19,16 @@
         }
     }
 
+    /* 注意：下面把 main.css 里 `.link` 的 @apply 内容展开了，而不是直接写 @apply link。
+       原因：Tailwind 的 @apply 解析自定义类要求该类「在同一个文件里」被定义，
+       而 src/styles/ 下的 CSS 是通过 ImageWrapper.astro 里的 import.meta.glob
+       间接进入构建图的，文件的转换顺序由 Vite 并发决定 —— 于是 `@apply link`
+       会偶发失败（The `link` class does not exist），构建随机挂掉。
+       展开成原生 utility 后即无跨文件依赖，构建稳定。
+       若上游修改了 main.css 中的 `.link`，需同步更新这里。 */
     a:not(.no-styling) {
-        @apply relative bg-none link font-medium text-[var(--primary)]
+        @apply relative bg-none transition rounded-md p-1 -m-1 z-0 font-medium text-[var(--primary)]
+        before:ease-out before:transition active:bg-none hover:before:bg-[var(--btn-plain-bg-hover)] active:before:bg-[var(--btn-plain-bg-active)] before:absolute before:rounded-[inherit] before:inset-0 before:scale-[0.85] hover:before:scale-100 before:-z-10
         underline decoration-[var(--link-underline)] decoration-1 decoration-dashed underline-offset-4;
         box-decoration-break: clone;
         -webkit-box-decoration-break: clone;
@@ -61,7 +69,8 @@
 
     .copy-btn {
         all: initial;
-        @apply btn-regular-dark opacity-0 shadow-lg shadow-black/50 absolute active:scale-90 h-8 w-8 top-3 right-3 text-sm rounded-lg transition-all ease-in-out z-20 cursor-pointer;
+        /* 同上：展开 main.css 中 `.btn-regular-dark` 的内容，避免跨文件 @apply */
+        @apply flex items-center justify-center bg-[oklch(0.45_0.01_var(--hue))] hover:bg-[oklch(0.50_0.01_var(--hue))] active:bg-[oklch(0.55_0.01_var(--hue))] dark:bg-[oklch(0.30_0.02_var(--hue))] dark:hover:bg-[oklch(0.35_0.03_var(--hue))] dark:active:bg-[oklch(0.40_0.03_var(--hue))] opacity-0 shadow-lg shadow-black/50 absolute active:scale-90 h-8 w-8 top-3 right-3 text-sm rounded-lg transition-all ease-in-out z-20 cursor-pointer;
     }
     .frame:hover .copy-btn {
         opacity: 1;

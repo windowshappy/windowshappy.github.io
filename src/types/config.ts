@@ -100,3 +100,22 @@ export type BlogPostData = {
 export type ExpressiveCodeConfig = {
 	theme: string;
 };
+
+export type GiscusConfig = {
+	repo: string; // GitHub 仓库，格式 owner/repo
+	repoId: string; // 仓库的 node_id，见 https://giscus.app 配置页
+	category: string; // Discussions 分类名称
+	categoryId: string; // 分类的 node_id
+	mapping: "pathname" | "url" | "title" | "og:title" | "specific" | "number";
+	strict: boolean; // 严格匹配模式
+	reactionsEnabled: boolean; // 允许点 emoji 反应
+	emitMetadata: boolean; // 向父页面发送 discussion 元数据
+	inputPosition: "top" | "bottom"; // 评论输入框位置
+	lang: string; // 界面语言，如 zh-CN
+	loading: "lazy" | "eager";
+};
+
+export type CommentConfig = {
+	enable: boolean;
+	giscus: GiscusConfig;
+};

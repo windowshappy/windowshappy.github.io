@@ -1,0 +1,35 @@
+---
+import { commentConfig } from "@/config";
+import { Icon } from "astro-icon/components";
+
+const giscus = commentConfig.giscus;
+
+// giscus 的全部参数都渲染成 data-* 属性，
+// 由 Layout.astro 里的全局脚本读取并注入 client.js
+// （Swup 无刷新跳转时组件内的 <script> 不会重新执行，所以必须在全局脚本里初始化）
+const giscusAttrs = {
+	"data-repo": giscus.repo,
+	"data-repo-id": giscus.repoId,
+	"data-category": giscus.category,
+	"data-category-id": giscus.categoryId,
+	"data-mapping": giscus.mapping,
+	"data-strict": giscus.strict ? "1" : "0",
+	"data-reactions-enabled": giscus.reactionsEnabled ? "1" : "0",
+	"data-emit-metadata": giscus.emitMetadata ? "1" : "0",
+	"data-input-position": giscus.inputPosition,
+	"data-lang": giscus.lang,
+	"data-loading": giscus.loading,
+};
+---
+
+{commentConfig.enable && (
+    <div class="card-base w-full px-6 md:px-9 py-6 mb-4 onload-animation">
+        <div class="flex flex-row items-center gap-3 mb-5 text-black/75 dark:text-white/75">
+            <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center">
+                <Icon name="material-symbols:comment-rounded"></Icon>
+            </div>
+            <div class="font-bold">评论</div>
+        </div>
+        <div id="giscus-container" class="giscus w-full" {...giscusAttrs}></div>
+    </div>
+)}
