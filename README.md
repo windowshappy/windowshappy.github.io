@@ -100,7 +100,9 @@ curl "https://giscus.app/api/discussions/categories?repo=windowshappy/windowshap
 
 ## 访问统计（Umami）
 
-用 [Umami](https://umami.is) 统计访问量：**无 cookie、不采集个人信息**，脚本只有 5KB。配置在 `src/config.ts` → `analyticsConfig.umami`，目前是**关闭**状态，按下面三步开启：
+用 [Umami](https://umami.is) 统计访问量：**无 cookie、不采集个人信息**，脚本只有 5KB。配置在 `src/config.ts` → `analyticsConfig.umami`，**目前已开启**（网站 ID 已填好）。
+
+只想看数据的话，直接登录 <https://cloud.umami.is> 打开对应网站即可，实时面板能看到当前的访问。以后要换账号或重新配置，步骤是：
 
 1. 注册 <https://cloud.umami.is>（邮箱即可，免费额度对个人博客足够）
 2. 登录后 **Settings → Websites → Add website**，域名填 `windowshappy.github.io`
