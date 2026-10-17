@@ -81,12 +81,12 @@ export const expressiveCodeConfig: ExpressiveCodeConfig = {
 // 评论系统（giscus，基于 GitHub Discussions）
 // 配置项可在 https://giscus.app/zh-CN 上生成；改完需要重新部署
 export const commentConfig: CommentConfig = {
-	enable: false, // 配置好下面四项后改成 true 即可开启
+	enable: true,
 	giscus: {
 		repo: "windowshappy/windowshappy.github.io",
 		repoId: "R_kgDOIILetg", // 仓库 node_id
 		category: "Announcements", // Discussions 分类名
-		categoryId: "", // 分类 node_id，待填写
+		categoryId: "DIC_kwDOIILets4DIrpM", // 分类 node_id
 		mapping: "pathname", // 用页面路径关联 discussion
 		strict: false, // 用 pathname 时建议 false，否则标题重命名后评论会错位
 		reactionsEnabled: true, // 允许对文章点 emoji 反应
