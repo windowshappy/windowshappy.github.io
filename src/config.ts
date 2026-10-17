@@ -104,8 +104,8 @@ export const commentConfig: CommentConfig = {
 // 自建实例：把 baseUrl 换成自己的域名即可（脚本路径固定是 /script.js）
 export const analyticsConfig: AnalyticsConfig = {
 	umami: {
-		enable: false, // 填好 websiteId 后改成 true
-		websiteId: "", // 形如 xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+		enable: true,
+		websiteId: "2e0386a9-e652-4f87-a58a-8f574e27e76e", // Umami 后台的「网站 ID」
 		baseUrl: "https://cloud.umami.is",
 		domains: "windowshappy.github.io", // 只统计这个主机名（注意：不要带端口/协议，umami 是拿 location.hostname 比的）
 	},
