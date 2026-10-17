@@ -43,6 +43,47 @@ heroImage: ../../assets/可选封面图.png   # 可选
 
 之后每次 `git push` 都会自动更新线上站点。
 
+## 网络说明（重要）
+
+这台机器上 `github.com:443` 是**不通的**（连接被重置），但 `ssh.github.com:443` 和 `api.github.com` 可以访问。所以 git 远程用的是 SSH over 443。
+
+`C:\Users\suzirui\.ssh\config` 内容：
+
+```
+Host github.com
+    HostName ssh.github.com
+    Port 443
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+```
+
+远程地址：
+
+```sh
+git remote set-url origin git@github.com:windowshappy/windowshappy.github.io.git
+```
+
+验证连接是否正常：
+
+```sh
+ssh -T git@github.com
+# 期望输出：Hi windowshappy! You've successfully authenticated...
+```
+
+如果哪天 `github.com` 能直连了，把 `~/.ssh/config` 里的 `HostName ssh.github.com` / `Port 443` 两行删掉即可。
+
+注意：**不要用 HTTPS 地址推送**（`https://github.com/...`），在这台机器上会 timeout。
+
+## 历史站点
+
+2022 年的旧 Hexo 站点已完整备份在 `legacy-hexo` 分支（21 个提交），随时可取回：
+
+```sh
+git fetch origin legacy-hexo
+git checkout legacy-hexo
+```
+
 ## 目录结构
 
 ```text
